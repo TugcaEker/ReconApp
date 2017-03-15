@@ -1,6 +1,7 @@
 package itech.com.reconapp.types;
 
 public class Coordinate {
+    public String directionNames[] = {"N","NNE", "NE","ENE","E", "ESE","SE","SSE", "S","SSW", "SW","WSW", "W","WNW", "NW","NNW", "N"};
     public int EarthRadius = 6371;
     public double latitude;
     public double longitude;
@@ -28,4 +29,18 @@ public class Coordinate {
     private double haversine(double val) {
         return Math.pow(Math.sin(val / 2), 2);
     }
+
+    public double bearing(Coordinate to) {
+        double diffrenceOfLongitudes = to.longitude - longitude;
+        double yAxis = Math.sin(diffrenceOfLongitudes) * Math.cos(to.latitude);
+        double xAxis = Math.cos(latitude) * Math.sin(to.latitude) - Math.sin(latitude) * Math.cos(to.latitude) * Math.cos(diffrenceOfLongitudes);
+
+        return ( Math.toDegrees(Math.atan2(yAxis, xAxis)) + 360 ) % 360;
+    }
+
+    public String bearingInDirectionNames(Coordinate to){
+        double angle = bearing(to);
+        return directionNames[(int) (angle / 22.5) % 16];
+    }
 }
+
