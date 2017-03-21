@@ -1,27 +1,33 @@
 package itech.com.reconapp.types;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Polygon {
-    public Coordinate corners[];
+    public List<Coordinate> corners = new ArrayList<>();
     public int count;
     public Coordinate center;
+    private String key;
+    public String type;
 
     private void update() {
-        this.count = corners.length;
+        this.count = corners.size();
     }
 
     public boolean isInside(Coordinate point) {
-        int sides = corners.length - 1;
+        int sides = corners.size() - 1;
         int j = sides - 1;
         boolean pointStatus = false;
         for (int i = 0; i < sides; i++) {
-            if (corners[i].longitude < point.longitude && corners[j].longitude >= point.longitude ||
-                    corners[j].longitude < point.longitude && corners[i].longitude >= point.longitude) {
-                if (corners[i].latitude + (point.longitude - corners[i].longitude) /
-                        (corners[j].longitude - corners[i].longitude) * (corners[j].latitude - corners[i].latitude) < point.latitude) {
+            if (corners.get(i).longitude < point.longitude && corners.get(j).longitude >= point.longitude ||
+                    corners.get(j).longitude < point.longitude && corners.get(i).longitude >= point.longitude) {
+                if (corners.get(i).latitude + (point.longitude - corners.get(i).longitude) /
+                        (corners.get(j).longitude - corners.get(i).longitude) * (corners.get(j).latitude - corners.get(i).latitude) < point.latitude) {
                     pointStatus = !pointStatus;
                 }
             }
@@ -32,8 +38,8 @@ public class Polygon {
 
     public Coordinate center() {
         this.update();
-        if (corners.length == 1) {
-            return corners[0];
+        if (corners.size() == 1) {
+            return corners.get(0);
         }
 
         double x = 0;
@@ -67,4 +73,39 @@ public class Polygon {
         Coordinate calculated = center();
         this.center = calculated;
     }
+
+    public void addCorner(double lat, double lon){
+        corners.add(new Coordinate(lat, lon));
+    }
+
+    public void addCorner(Coordinate corner){
+        corners.add(corner);
+    }
+
+
+    public void initilizeFromJSON(JSONObject json){
+        try {
+            setKey(json.getString("key"));
+            type = json.getString("type_name");
+
+            JSONArray coordinateList = json.getJSONArray("coordinates");
+            for(int i = 0; i < coordinateList.length(); i++){
+                JSONObject singleCoordinate = coordinateList.getJSONObject(i);
+                addCorner(singleCoordinate.getDouble("latitude"), singleCoordinate.getDouble("longitude"));
+            }
+
+            setCenter();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
 }

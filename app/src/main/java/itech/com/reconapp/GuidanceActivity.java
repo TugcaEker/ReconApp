@@ -2,6 +2,7 @@ package itech.com.reconapp;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.reconinstruments.os.HUDOS;
@@ -10,18 +11,26 @@ import com.reconinstruments.os.connectivity.IHUDConnectivity;
 import com.reconinstruments.os.connectivity.http.HUDHttpRequest;
 import com.reconinstruments.os.connectivity.http.HUDHttpResponse;
 
+import org.json.JSONObject;
+import org.w3c.dom.Text;
+
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import itech.com.reconapp.misc.DownloadFileTask;
+import itech.com.reconapp.misc.RESTClient;
+import itech.com.reconapp.types.Polygon;
 
 public class GuidanceActivity extends Activity implements IHUDConnectivity  {
     private String MainPath = "http://5636db49.ngrok.io/myapp/";
     private HUDConnectivityManager mHUDConnectivityManager = null;
     private TextView view_Text;
+
+    private List<Polygon> polygons = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +40,7 @@ public class GuidanceActivity extends Activity implements IHUDConnectivity  {
         setContentView(R.layout.activity_guidance);
 
         view_Text = (TextView) findViewById(R.id.deneme_alan);
+        RelativeLayout rl = (RelativeLayout) findViewById(R.id.relative_container);
 
         mHUDConnectivityManager = (HUDConnectivityManager) HUDOS.getHUDService(HUDOS.HUD_CONNECTIVITY_SERVICE);
 
@@ -41,28 +51,35 @@ public class GuidanceActivity extends Activity implements IHUDConnectivity  {
         }
 
         /* Download test */
-        String url = MainPath + "person/list";
-
-        HUDHttpRequest request = null;
+        String url = MainPath + "gpslog/areas/31";
+        int count = 0;
         try {
 
-            /* Prepare headers */
-            Map<String, List<String>> headers = new HashMap<String, List<String>>();
-            List<String> ContentTypeList = new ArrayList<String>();
-            List<String> AuthList = new ArrayList<String>();
-            ContentTypeList.add("application/json");
-            AuthList.add("Basic ZTE5NDE5MEBtZXR1LmVkdS50cjoxMjM0NTY3OA==");
-            headers.put("Content-Type", ContentTypeList);
-            headers.put("Authorization", AuthList);
+            RESTClient http = new RESTClient(mHUDConnectivityManager);
 
-            request = new HUDHttpRequest(HUDHttpRequest.RequestMethod.GET, url);
-            request.setHeaders(headers);
+            JSONObject areas = http.execute(url, HUDHttpRequest.RequestMethod.GET);
+            Iterator iterator = areas.keys();
+            while(iterator.hasNext()){
+                String area_key = (String) iterator.next();
+                JSONObject area = areas.getJSONObject(area_key);
 
-            HUDHttpResponse response = mHUDConnectivityManager.sendWebRequest(request);
-            if (response.hasBody()) {
-                view_Text.setText(response.getBodyString());
+                Polygon polygon = new Polygon();
+                polygon.initilizeFromJSON(area);
+                count++;
+                polygons.add(polygon);
+
+                /* her polygon için yazı ekle */
+                TextView polygonal_view = new TextView(this);
+                polygonal_view.setText(String.valueOf(polygon.center.latitude) + ", " + String.valueOf(polygon.center.longitude));
+
+                rl.addView(polygonal_view);
+
             }
+
+
         } catch (Exception e) {
+            view_Text.setText(e.toString());
+
             e.printStackTrace();
         }
 
