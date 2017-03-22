@@ -1,5 +1,8 @@
 package itech.com.reconapp.types;
 
+import android.media.Image;
+import android.widget.ImageView;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,6 +17,8 @@ public class Polygon {
     public Coordinate center;
     private String key;
     public String type;
+    public ImageView view;
+    public boolean isReady = false;
 
     private void update() {
         this.count = corners.size();
