@@ -9,7 +9,11 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-feature android:name="android.hardware.camera" />
 
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -19,21 +23,23 @@
         android:theme="@style/ReconTheme">
 
         <activity android:name=".GuidanceActivity">
+
+        </activity>
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity">
-
-        </activity>
 
         <activity
-            android:name="itech.com.reconapp.AltitudeActivity"
+            android:name=".AltitudeActivity"
             android:screenOrientation="landscape"/>
-
         <activity
-            android:name="itech.com.reconapp.SpeedActivity"
+            android:name=".CameraActivity"
+            android:screenOrientation="landscape"/>
+        <activity
+            android:name=".SpeedActivity"
             android:screenOrientation="landscape"/>
 
         <uses-library android:name="com.reconinstruments.os"/>
