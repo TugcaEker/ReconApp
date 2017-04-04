@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="itech.com.reconapp">
+    package="com.itech.reconapp">
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -40,6 +40,9 @@
             android:screenOrientation="landscape"/>
         <activity
             android:name=".SpeedActivity"
+            android:screenOrientation="landscape"/>
+        <activity
+            android:name=".CompassActivity"
             android:screenOrientation="landscape"/>
 
         <uses-library android:name="com.reconinstruments.os"/>

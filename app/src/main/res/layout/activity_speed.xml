@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:layout_margin="5dp"
     android:stretchColumns="0,1,2"
-    tools:context="itech.com.reconapp.SpeedActivity" >
+    tools:context="com.itech.reconapp.SpeedActivity" >
 
     <TableRow
         android:id="@+id/tableRow1"

@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:layout_margin="5dp"
     android:stretchColumns="0,1,2"
-    tools:context="itech.com.reconapp.AltitudeActivity" >
+    tools:context="com.itech.reconapp.AltitudeActivity" >
 
     <TableRow
         android:layout_width="fill_parent"
