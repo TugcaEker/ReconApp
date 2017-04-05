@@ -40,9 +40,11 @@ public class MainActivity extends SimpleListActivity {
         Intent IntentA = new Intent(this, CameraActivity.class);
         Intent IntentB = new Intent(this, GuidanceActivity.class);
         Intent IntentC = new Intent(this, CompassActivity.class);
+        Intent IntentD = new Intent(this, MapActivity.class);
         setContents(
                 new ListItem("Open Camera", IntentA),
                 new ListItem("Guide Me", IntentB),
+                new ListItem("Map", IntentD),
                 new ListItem("Compass", IntentC)
 
         );

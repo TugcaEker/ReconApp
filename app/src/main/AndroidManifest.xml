@@ -44,6 +44,9 @@
         <activity
             android:name=".CompassActivity"
             android:screenOrientation="landscape"/>
+        <activity
+            android:name=".MapActivity"
+            android:screenOrientation="landscape"/>
 
         <uses-library android:name="com.reconinstruments.os"/>
         <uses-library android:name="com.reconinstruments.lib"/>
