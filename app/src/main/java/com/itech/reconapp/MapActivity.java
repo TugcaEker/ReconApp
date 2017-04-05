@@ -55,6 +55,12 @@ public class MapActivity extends FragmentActivity {
         sendBroadcast(intent);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        android.os.Process.killProcess(android.os.Process.myPid());
+    }
+
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
