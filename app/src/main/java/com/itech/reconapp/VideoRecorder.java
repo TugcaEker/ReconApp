@@ -10,7 +10,6 @@ import android.util.Log;
 import java.io.File;
 import java.io.IOException;
 
-
 public class VideoRecorder {
 
     private static final String TAG = "VideoRecorder";
@@ -31,7 +30,6 @@ public class VideoRecorder {
         this.camera = camera;
         videoValues = StorageUtils.getVideoData(camProfile,recordingStartTime);
         tmpVideoFile = StorageUtils.getVideoPath(videoValues)+".tmp";
-        prepareMediaRecorder(tmpVideoFile);
     }
 
     public void startRecording() {
@@ -42,59 +40,18 @@ public class VideoRecorder {
     public void stopRecording() {
         boolean saveVideo = false;
         try {
-            mediaRecorder.stop(); // stop the recording
+            mediaRecorder.stop();
             saveVideo = true;
         } catch(RuntimeException e) {
-            boolean deleted = new File(tmpVideoFile).delete();  //you must delete the outputfile when the recorder stop failed.
+            boolean deleted = new File(tmpVideoFile).delete();
             Log.e(TAG,"Error stopping media recorder "+(deleted?"deleted tmp fail":"failed to delete tmp file"),e);
         } finally {
-            releaseMediaRecorder(); // release the MediaRecorder object
+            /* release olacak */
         }
-        if(saveVideo)
-            storeVideo();
-    }
-
-    private void storeVideo() {
-        long duration = System.currentTimeMillis() - recordingStartTime;
-        if (duration <= 0) {
-            Log.w(TAG, "Video duration <= 0 : " + duration);
-        }
-        StorageUtils.insertVideo(activity, tmpVideoFile, videoValues, duration);
-    }
-
-    private boolean prepareMediaRecorder(String fileName) {
-        mediaRecorder = new MediaRecorder();
-
-        camera.unlock();
-        mediaRecorder.setCamera(camera);
-
-        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
-        mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
-
-        mediaRecorder.setProfile(camProfile);
-
-        mediaRecorder.setOutputFile(fileName);
-        mediaRecorder.setMaxDuration(MAX_DURATION * 1000);
-        mediaRecorder.setMaxFileSize(50000000); // Set max file size 50M
-
-        try {
-            mediaRecorder.prepare();
-        } catch (IllegalStateException e) {
-            releaseMediaRecorder();
-            return false;
-        } catch (IOException e) {
-            releaseMediaRecorder();
-            return false;
-        }
-        return true;
-    }
-
-    public void releaseMediaRecorder() {
-        if (mediaRecorder != null) {
-            mediaRecorder.reset(); // clear recorder configuration
-            mediaRecorder.release(); // release the recorder object
-            mediaRecorder = null;
-            camera.lock(); // lock camera for later use
+        if(saveVideo){
+            /* kayit yapacagiz */
         }
     }
+
+
 }
