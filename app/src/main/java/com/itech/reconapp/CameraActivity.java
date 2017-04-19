@@ -48,11 +48,19 @@ public class CameraActivity extends CarouselActivity {
 
     Camera camera;
 
+
     CameraPreview preview;
+    TextView recordingTimeView;
+    FrameLayout modeSwitchView;
+
     VideoRecorder activeVideo;
     CarouselItem photoItem;
     private HUDConnectivityManager mHUDConnectivityManager = null;
-    SharedPreferences settings;
+    SharedPreferenecs settings;
+
+    SimpleDateFormat recordTimeFormatter = new SimpleDateFormat("mm:ss", Locale.getDefault());
+    CarouselItem videoItem;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -75,11 +83,23 @@ public class CameraActivity extends CarouselActivity {
         getCarousel().setContents(photoItem);
         preview = (CameraPreview) findViewById(R.id.preview);
         mHUDConnectivityManager = (HUDConnectivityManager) HUDOS.getHUDService(HUDOS.HUD_CONNECTIVITY_SERVICE);
+        recordingTimeView = (TextView) findViewById(R.id.recording_time);
+        modeSwitchView = (FrameLayout) findViewById(R.id.mode_switcher);
 
     }
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if(keyCode==KeyEvent.KEYCODE_DPAD_CENTER&&getCarousel().getCurrentCarouselItem() == videoItem) {
+            Log.d("TAG", "recording: " + isRecording());
+            if (!isRecording()) {
+                startRecording();
+            } else {
+                stopRecording();
+            }
+            return true;
+        }
+
         return super.onKeyUp(keyCode, event);
     }
 
@@ -138,5 +158,39 @@ public class CameraActivity extends CarouselActivity {
             camera.release();
             camera = null;
         }
+    }
+
+    private void startRecording() {
+        activeVideo = new VideoRecorder(CameraActivity.this, camera);
+        activeVideo.startRecording();
+
+        recordingTimeView.setVisibility(View.VISIBLE);
+        modeSwitchView.setVisibility(View.GONE);
+
+        final Handler recordHandler = new Handler();
+        final Runnable recordUpdater = new Runnable() {
+            int recordTime = VideoRecorder.MAX_DURATION;
+            @Override
+            public void run() {
+                recordTime--;
+                String timeLeftString = recordTimeFormatter.format(new Date(recordTime * 1000));
+                recordingTimeView.setText(timeLeftString);
+
+                if(recordTime>0&&isRecording())
+                    recordHandler.postDelayed(this,1000);
+                else if(isRecording())
+                    stopRecording();
+            }
+        };
+        recordHandler.postDelayed(recordUpdater, 0);
+    }
+
+    public void stopRecording() {
+        activeVideo.stopRecording();
+        activeVideo = null;
+
+        recordingTimeView.setVisibility(View.GONE);
+        modeSwitchView.setVisibility(View.VISIBLE);
+        Toast.makeText(this, "Video captured!", Toast.LENGTH_LONG).show();
     }
 }

@@ -32,7 +32,7 @@ public class MainActivity extends SimpleListActivity {
 
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
-        editor.putString("api_path", "http://c4ce9463.ngrok.io/myapp/");
+        editor.putString("api_path", "http://e5635d66.ngrok.io/myapp/");
         editor.commit();
 
 //        requestWindowFeature(Window.FEATURE_NO_TITLE);
