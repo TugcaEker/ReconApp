@@ -67,6 +67,31 @@ public class StorageUtils {
         return values.getAsString(MediaStore.Images.ImageColumns.DATA);
     }
 
+    public static String insertVideo(Context context, String tmpPath, ContentValues metadata, long duration) {
+        metadata.put(MediaStore.Video.Media.SIZE, new File(tmpPath).length());
+        metadata.put(MediaStore.Video.Media.DURATION, duration);
+
+        ContentResolver resolver = context.getContentResolver();
+        Uri uri = null;
+        try {
+            uri = resolver.insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, metadata);
+            String finalName = metadata.getAsString(
+                    MediaStore.Video.Media.DATA);
+            if(!new File(tmpPath).renameTo(new File(finalName))) {
+                Log.e("SaveVideo", "failed to rename tmp file");
+            } else {
+                Log.v("SaveVideo", "Saved video to "+finalName);
+            }
+
+            resolver.update(uri, metadata, null, null);
+        } catch (Exception e) {
+            uri = null;
+        } finally {
+            Log.v("SaveVideo", "Video linki:  " + uri);
+        }
+        return uri.toString();
+    }
+
     public static String insertJpeg(Context context, byte[] data, long dateTaken) {
 
         ContentValues metaData = getPhotoData(dateTaken);
